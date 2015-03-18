@@ -1,14 +1,16 @@
-x <- c(30,30.5,31)
-y <- c(69.333333,69.5,69.666666)
-z <- c(NA,NA,NA)
-for(i in 1:3){
-        gmap <- c("http://maps.googleapis.com/maps/api/elevation/json?locations=",y[i],",",x[i],"&sensor=false")
-        coordlink <- paste(gmap[1],gmap[2],gmap[3],gmap[4],gmap[5], sep='')
-        con <- url(coordlink)
-        z[i] <- data.frame(readLines(con))
+source("~/Dropbox/klovshot/myR/createLocs.R")
+library(jsonlite)
+createLocs(c(69.333333,30),c(69.666666,31), 0.05)
+coords <-NULL
+for (i in 1:nrow(Locs)) {
+        coords[i] <- paste(Locs[i,], collapse=",")
+                
 }
-z
-z[1]
-a <- fromJSON(file = coordlink)
+dots <- paste(coords, collapse ="|")
+nchar(dots)
+
+        gmaplink <- paste("http://maps.googleapis.com/maps/api/elevation/json?locations=",dots,"&sensor=false", sep ="")
+        a <- fromJSON(gmaplink)$results
+        cbind(z,a$elevation)
 str(a)
 a[[1]][[1]]$elevation
